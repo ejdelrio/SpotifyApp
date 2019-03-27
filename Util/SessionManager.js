@@ -55,7 +55,11 @@ class SessionManager {
     this.accessToken = token;
   }
 
-  RefreshAcessToken() {
+  RefreshAcessToken(token) {
+    if (token) {
+      return token;
+    }
+
     return new Promise((resolve, reject) => {
       request.post(this.RefereshRequestBody, this.RefreshCallback(resolve, reject, this))
     });
@@ -65,16 +69,18 @@ class SessionManager {
 
   }
 
-  CheckForValidityOfToekn() {
+  CheckForValidityOfToken() {
 
   }
 
   PreValidateSpotifyApiCall() {
-
+    // Program CheckForValidityOfToken to check if the token is valid, if it is, return the existing token, else return null.
+    // If it returns null RefreshAcessToken will fetch a new token
+    return this.CheckForValidityOfToken()
+      .then(this.RefreshAcessToken);
   }
 }
 
 var sessionInstance = new SessionManager();
-Object.freeze(sessionInstance);
 
 module.exports = sessionInstance;
